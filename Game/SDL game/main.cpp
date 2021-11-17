@@ -198,18 +198,21 @@ int main(int argc, char* argv[])
 			wall.y = 40;
 			wall.w = 40;
 			wall.h = 400;
+
+			//Creating the golf ball
+			player = IMG_LoadTexture(renderer, "res/ball.bmp");
+			SDL_QueryTexture(player, NULL, NULL, &w, &h);
 			while (!quit)
 			{
-				//Creating the golf ball
-				player = IMG_LoadTexture(renderer, "res/ball.bmp");
-				SDL_QueryTexture(player, NULL, NULL, &w, &h);
-
+				SDL_RenderClear(renderer);
 				//Setting background color
 				SDL_SetRenderDrawColor(renderer, 0x10, 0xB3, 0x2D, 0xFF);
 				SDL_RenderClear(renderer);
-
 				//Initializing the player
 				SDL_RenderCopy(renderer, player, NULL, &texr);
+				//Render wall
+				SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
+				SDL_RenderDrawRect(renderer, &wall);
 
 				while (SDL_PollEvent(&event) != 0)
 				{
@@ -252,76 +255,71 @@ int main(int argc, char* argv[])
 							//	texr.y = yMouse / 2;
 							//}
 						}
+
 						//Move with w,a,s,d
 						int mVelX = 0, mVelY = 0;
-							if (event.type == SDL_KEYDOWN)
+						if (event.type == SDL_KEYDOWN)
+						{
+							//Adjust the velocity
+							switch (event.key.keysym.sym)
 							{
-								//Adjust the velocity
-								switch (event.key.keysym.sym)
-								{
-									case SDLK_w: texr.y -= 5; break;
-									case SDLK_s: texr.y += 5; break;
-									case SDLK_a: texr.x -= 5; break;
-									case SDLK_d: texr.x += 5; break;
-								}
+								case SDLK_w: texr.y -= 5; break;
+								case SDLK_s: texr.y += 5; break;
+								case SDLK_a: texr.x -= 5; break;
+								case SDLK_d: texr.x += 5; break;
 							}
+						}
 
-							SDL_Rect mCollider;
-							mCollider.w = xSize;
-							mCollider.h = ySize;
+						SDL_Rect mCollider;
+						mCollider.w = xSize;
+						mCollider.h = ySize;
 
-							texr.x -= mVelX;
-							mCollider.x = texr.x;
+						texr.x -= mVelX;
+						mCollider.x = texr.x;
 
-							//If the dot collided or went too far to the left or right
-							if ((texr.x < 0 || texr.x > SCREEN_WIDTH || (texr.x + mCollider.w > SCREEN_WIDTH) || checkCollision(mCollider, wall)) && SDL_KEYUP)
-							{
-								switch (event.key.keysym.sym) {
-								case SDLK_a:
-									//Move back
-									texr.x += 5;
-									mCollider.x = texr.x;
-									break;
-								case SDLK_d:
-									//Move back
-									texr.x -= 5;
-									mCollider.x = texr.x;
-									break;
-								default:
-									break;
-								}
+						//If the dot collided or went too far to the left or right
+						if ((texr.x < 0 || texr.x > SCREEN_WIDTH || (texr.x + mCollider.w > SCREEN_WIDTH) || checkCollision(mCollider, wall)) && SDL_KEYUP)
+						{
+							switch (event.key.keysym.sym) {
+							case SDLK_a:
+								//Move back
+								texr.x += 5;
+								mCollider.x = texr.x;
+								break;
+							case SDLK_d:
+								//Move back
+								texr.x -= 5;
+								mCollider.x = texr.x;
+								break;
+							default:
+								break;
 							}
+						}
 
-							//Move the dot up or down
-							texr.y -= mVelY;
-							mCollider.y = texr.y;
+						//Move the dot up or down
+						texr.y -= mVelY;
+						mCollider.y = texr.y;
 
-							//If the dot collided or went too far up or down
-							if ((texr.y < 0 || texr.y > SCREEN_HEIGHT || (texr.y + mCollider.h > SCREEN_HEIGHT) || checkCollision(mCollider, wall)) && SDL_KEYUP)
-							{
-								switch (event.key.keysym.sym) {
-								case SDLK_s:
-									//Move back
-									texr.y -= 5;
-									mCollider.y -= 5;
-									break;
-								case SDLK_w:
-									//Move back
-									texr.y += 5;
-									mCollider.y -= 5;
-									break;
-								}
+						//If the dot collided or went too far up or down
+						if ((texr.y < 0 || texr.y > SCREEN_HEIGHT || (texr.y + mCollider.h > SCREEN_HEIGHT) || checkCollision(mCollider, wall)) && SDL_KEYUP)
+						{
+							switch (event.key.keysym.sym) {
+							case SDLK_s:
+								//Move back
+								texr.y -= 5;
+								mCollider.y -= 5;
+								
+								break;
+							case SDLK_w:
+								//Move back
+								texr.y += 5;
+								mCollider.y -= 5;
+								break;
 							}
-
-							/**/
+						}
 						//Initializing the player's new coordinates
 						SDL_RenderCopy(renderer, player, NULL, &texr);
 					}
-
-					//Render wall
-					SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
-					SDL_RenderDrawRect(renderer, &wall);
-
 
 					//Calling the text function
 					//TTF_Init();
@@ -330,10 +328,12 @@ int main(int argc, char* argv[])
 					//Middle horizontal line
 					//SDL_UpdateWindowSurface(window);
 					//SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
-					//SDL_RenderDrawLine(renderer, 0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
+					//SDL_RenderDrawLine(renderer, 0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2);			
 
-					SDL_RenderPresent(renderer);
+					SDL_RenderCopy(renderer, player, NULL, &texr);
 				}
+				
+				SDL_RenderPresent(renderer);
 			}
 		}
 		//Closing everything
