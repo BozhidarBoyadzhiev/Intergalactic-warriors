@@ -2,9 +2,12 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <SDL_image.h>
-#include <string>
 #include <cmath>
 #include <iostream>
+/* Random number generating */
+#include <stdio.h>      /* NULL */
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* time */
 
 //Screen size
 const int SCREEN_WIDTH = 640;
@@ -28,6 +31,7 @@ float y = SCREEN_HEIGHT / 2 - ySize / 2;
 
 //Start structure initializing
 SDL_Rect texr;
+SDL_Rect texrhole;
 
 SDL_Window* window = NULL;
 
@@ -39,6 +43,7 @@ SDL_Surface* gHelloWorld = NULL;
 
 SDL_Texture* player;
 SDL_Texture* texture;
+SDL_Texture* hole;
 //End structure initializing
 
 
@@ -190,18 +195,560 @@ int main(int argc, char* argv[])
 			bool quit = false;
 			int w, h;
 			texr.x = x; texr.y = y; texr.w = xSize; texr.h = ySize;
+			//Size for hole
+			texrhole.w = xSize + 10; texrhole.h = ySize + 10;
 			SDL_Event event;
 
+			//Initialize random seed
+			srand(time(NULL));
+
 			//Set the wall
-			SDL_Rect wall{};
-			wall.x = 90;
-			wall.y = 40;
-			wall.w = 40;
-			wall.h = 400;
+			SDL_Rect wall1{};
+			int whichWall1 = rand() % 2 + 1;
+			std::cout << whichWall1 << "\n";
+			switch (whichWall1)
+			{
+				case 1:
+				{
+					int wallPos = 1 + rand() % 4;
+					switch (wallPos)
+					{
+						case 1:
+						{
+							wall1.y = 50 + rand() % 20;
+							wall1.x = 50 + rand() % 206;
+							wall1.w = 30 + rand() % 10;
+							wall1.h = 150 + rand() % 50;
+							break;
+						}
+						case 2:
+						{
+							wall1.y = 50 + rand() % 20;
+							wall1.x = 50 + rand() % 206;
+							wall1.w = 30 + rand() % 10;
+							wall1.h = 150 + rand() % 25;
+							break;
+						}
+						case 3:
+						{
+							wall1.y = 50 + rand() % 20;
+							wall1.x = 50 + rand() % 206;
+							wall1.w = 30 + rand() % 10;
+							wall1.h = 150 + rand() % 25;
+							break;
+						}
+						case 4:
+						{
+							wall1.y = 50 + rand() % 20;
+							wall1.x = 50 + rand() % 206;
+							wall1.w = 40 + rand() % 10;
+							wall1.h = 150 + rand() % 55;
+							break;
+						}
+					}
+					break;
+				}
+				case 2:
+				{
+					int wallPos = 1 + rand() % 4;
+					switch (wallPos)
+					{
+						case 1:
+						{
+							wall1.y = 50 + rand() % 142;
+							wall1.x = 50 + rand() % 130;
+							wall1.w = 150 + rand() % 50;
+							wall1.h = 30 + rand() % 10;
+							break;
+						}
+						case 2:
+						{
+							wall1.y = 50 + rand() % 142;
+							wall1.x = 50 + rand() % 130;
+							wall1.w = 150 + rand() % 50;
+							wall1.h = 30 + rand() % 10;
+							break;
+						}
+						case 3:
+						{
+							wall1.y = 50 + rand() % 142;
+							wall1.x = 50 + rand() % 130;
+							wall1.w = 150 + rand() % 50;
+							wall1.h = 30 + rand() % 10;
+							break;
+						}
+						case 4:
+						{
+							wall1.y = 50 + rand() % 142;
+							wall1.x = 50 + rand() % 130;
+							wall1.w = 150 + rand() % 50;
+							wall1.h = 30 + rand() % 10;
+							break;
+						}
+					}
+					break;
+				}
+			}
+
+			printf("%i %i %i %i\n", wall1.x, wall1.y, wall1.w, wall1.h);
+
+			//Set the wall
+			SDL_Rect wall2{};
+			int whichWall2 = rand() % 2 + 1;
+			std::cout << whichWall2 << "\n";
+			switch (whichWall2)
+			{
+			case 1:
+			{
+				int wallPos = 1 + rand() % 4;
+				switch (wallPos)
+				{
+				case 1:
+				{
+					wall2.y = 50 + rand() % 20;
+					wall2.x = 380 + rand() % 210;
+					wall2.w = 30 + rand() % 10;
+					wall2.h = 150 + rand() % 50;
+					break;
+				}
+				case 2:
+				{
+					wall2.y = 50 + rand() % 20;
+					wall2.x = 380 + rand() % 210;
+					wall2.w = 30 + rand() % 10;
+					wall2.h = 150 + rand() % 25;
+					break;
+				}
+				case 3:
+				{
+					wall2.y = 50 + rand() % 20;
+					wall2.x = 380 + rand() % 210;
+					wall2.w = 30 + rand() % 10;
+					wall2.h = 150 + rand() % 25;
+					break;
+				}
+				case 4:
+				{
+					wall2.y = 50 + rand() % 20;
+					wall2.x = 380 + rand() % 210;
+					wall2.w = 40 + rand() % 10;
+					wall2.h = 150 + rand() % 55;
+					break;
+				}
+				}
+				break;
+			}
+			case 2:
+			{
+				int wallPos = 1 + rand() % 4;
+				switch (wallPos)
+				{
+				case 1:
+				{
+					wall2.y = 50 + rand() % 142;
+					wall2.x = 380 + rand() % 80;
+					wall2.w = 150 + rand() % 50;
+					wall2.h = 30 + rand() % 10;
+					break;
+				}
+				case 2:
+				{
+					wall2.y = 50 + rand() % 142;
+					wall2.x = 380 + rand() % 80;
+					wall2.w = 150 + rand() % 50;
+					wall2.h = 30 + rand() % 10;
+					break;
+				}
+				case 3:
+				{
+					wall2.y = 50 + rand() % 142;
+					wall2.x = 380 + rand() % 80;
+					wall2.w = 150 + rand() % 50;
+					wall2.h = 30 + rand() % 10;
+					break;
+				}
+				case 4:
+				{
+					wall2.y = 50 + rand() % 142;
+					wall2.x = 380 + rand() % 80;
+					wall2.w = 150 + rand() % 50;
+					wall2.h = 30 + rand() % 10;
+					break;
+				}
+				}
+				break;
+			}
+			}
+
+			printf("%i %i %i %i\n", wall2.x, wall2.y, wall2.w, wall2.h);
+
+			//Set the wall
+			SDL_Rect wall3{};
+			int whichWall3 = rand() % 2 + 1;
+			std::cout << whichWall3 << "\n";
+			switch (whichWall3)
+			{
+			case 1:
+			{
+				int wallPos = 1 + rand() % 4;
+				switch (wallPos)
+				{
+				case 1:
+				{
+					wall3.y = 240 + rand() % 50;
+					wall3.x = 50 + rand() % 206;
+					wall3.w = 30 + rand() % 10;
+					wall3.h = 150 + rand() % 50;
+					break;
+				}
+				case 2:
+				{
+					wall3.y = 240 + rand() % 50;
+					wall3.x = 50 + rand() % 206;
+					wall3.w = 30 + rand() % 10;
+					wall3.h = 150 + rand() % 25;
+					break;
+				}
+				case 3:
+				{
+					wall3.y = 240 + rand() % 50;
+					wall3.x = 50 + rand() % 206;
+					wall3.w = 30 + rand() % 10;
+					wall3.h = 150 + rand() % 25;
+					break;
+				}
+				case 4:
+				{
+					wall3.y = 240 + rand() % 50;
+					wall3.x = 50 + rand() % 206;
+					wall3.w = 40 + rand() % 10;
+					wall3.h = 150 + rand() % 55;
+					break;
+				}
+				}
+				break;
+			}
+			case 2:
+			{
+				int wallPos = 1 + rand() % 4;
+				switch (wallPos)
+				{
+				case 1:
+				{
+					wall3.y = 280 + rand() % 150;
+					wall3.x = 50 + rand() % 130;
+					wall3.w = 150 + rand() % 50;
+					wall3.h = 30 + rand() % 10;
+					break;
+				}
+				case 2:
+				{
+					wall3.y = 280 + rand() % 150;
+					wall3.x = 50 + rand() % 130;
+					wall3.w = 150 + rand() % 50;
+					wall3.h = 30 + rand() % 10;
+					break;
+				}
+				case 3:
+				{
+					wall3.y = 280 + rand() % 150;
+					wall3.x = 50 + rand() % 130;
+					wall3.w = 150 + rand() % 50;
+					wall3.h = 30 + rand() % 10;
+					break;
+				}
+				case 4:
+				{
+					wall3.y = 280 + rand() % 150;
+					wall3.x = 50 + rand() % 130;
+					wall3.w = 150 + rand() % 50;
+					wall3.h = 30 + rand() % 10;
+					break;
+				}
+				}
+				break;
+			}
+			}
+
+			printf("%i %i %i %i\n", wall3.x, wall3.y, wall3.w, wall3.h);
+
+			//Set the wall
+			SDL_Rect wall4{};
+			int whichWall4 = rand() % 2 + 1;
+			std::cout << whichWall4 << "\n";
+			switch (whichWall4)
+			{
+			case 1:
+			{
+				int wallPos = 1 + rand() % 4;
+				switch (wallPos)
+				{
+				case 1:
+				{
+					wall4.y = 240 + rand() % 50;
+					wall4.x = 380 + rand() % 210;
+					wall4.w = 30 + rand() % 10;
+					wall4.h = 150 + rand() % 50;
+					break;
+				}
+				case 2:
+				{
+					wall4.y = 240 + rand() % 50;
+					wall4.x = 380 + rand() % 210;
+					wall4.w = 30 + rand() % 10;
+					wall4.h = 150 + rand() % 25;
+					break;
+				}
+				case 3:
+				{
+					wall4.y = 240 + rand() % 50;
+					wall4.x = 380 + rand() % 210;
+					wall4.w = 30 + rand() % 10;
+					wall4.h = 150 + rand() % 25;
+					break;
+				}
+				case 4:
+				{
+					wall4.y = 240 + rand() % 50;
+					wall4.x = 380 + rand() % 210;
+					wall4.w = 40 + rand() % 10;
+					wall4.h = 150 + rand() % 55;
+					break;
+				}
+				}
+				break;
+			}
+			case 2:
+			{
+				int wallPos = 1 + rand() % 4;
+				switch (wallPos)
+				{
+				case 1:
+				{
+					wall4.y = 280 + rand() % 150;
+					wall4.x = 380 + rand() % 80;
+					wall4.w = 150 + rand() % 50;
+					wall4.h = 30 + rand() % 10;
+					break;
+				}
+				case 2:
+				{
+					wall4.y = 280 + rand() % 150;
+					wall4.x = 380 + rand() % 80;
+					wall4.w = 150 + rand() % 50;
+					wall4.h = 30 + rand() % 10;
+					break;
+				}
+				case 3:
+				{
+					wall4.y = 280 + rand() % 150;
+					wall4.x = 380 + rand() % 80;
+					wall4.w = 150 + rand() % 50;
+					wall4.h = 30 + rand() % 10;
+					break;
+				}
+				case 4:
+				{
+					wall4.y = 280 + rand() % 150;
+					wall4.x = 380 + rand() % 80;
+					wall4.w = 150 + rand() % 50;
+					wall4.h = 30 + rand() % 10;
+					break;
+				}
+				}
+				break;
+			}
+			}
+
+			printf("%i %i %i %i\n", wall4.x, wall4.y, wall4.w, wall4.h);
+
+			//hole spawn
+			int wherehole = rand() % 4 + 1;
+			std::cout << "\n" << wherehole;
+			switch (wherehole)
+			{
+				case 1:
+				{
+					int rightOrDown = rand() % 2 + 1;
+					switch (rightOrDown)
+					{
+						case 1:
+						{
+							texrhole.x = rand() % 30 + 180;
+							texrhole.y = 30;
+							break;
+						}
+						case 2:
+						{
+							texrhole.x = 30;
+							texrhole.y = rand() % 30 + 140;
+							break;
+						}
+					}
+				}
+				case 2:
+				{
+					int leftOrDown = rand() % 2 + 1;
+					switch (leftOrDown)
+					{
+						case 1:
+						{
+							texrhole.x = rand() % 210 + 400;
+							texrhole.y = 30;
+							break;
+						}
+
+						case 2:
+						{
+							texrhole.x = 30;
+							texrhole.y = rand() % 30 + 140;
+							break;
+						}
+					}
+					break;
+				}
+				case 3:
+				{
+					int upOrRight = rand() % 2 + 1;
+					switch (upOrRight)
+					{
+						case 1:
+						{
+							texrhole.x = 30;
+							texrhole.y = rand() % 50 + 210;
+							break;
+						}
+
+						case 2:
+						{
+							texrhole.x = rand() % 30 + 180;
+							texrhole.y = 30;
+							break;
+						}
+					}
+					break;
+				}
+				case 4:
+				{
+					int leftOrUp = rand() % 2 + 1;
+					switch (leftOrUp)
+					{
+						case 1:
+						{
+							texrhole.x = 30;
+							texrhole.y = rand() % 50 + 210;
+							break;
+						}
+
+						case 2:
+						{
+							texrhole.x = rand() % 210 + 400;
+							texrhole.y = 30;
+							break;
+						}
+					}
+					break;
+				}
+			}
+
+			//ball spawn
+			int whereball = rand() % 4 + 1;
+			while (whereball == wherehole)
+			{
+				whereball = rand() % 4 + 1;
+			}
+			std::cout << "\n" << whereball;
+			switch (whereball)
+			{
+			case 1:
+			{
+				int rightOrDown = rand() % 2 + 1;
+				switch (rightOrDown)
+				{
+				case 1:
+				{
+					texr.x = rand() % 30 + 180;
+					texr.y = 30;
+					break;
+				}
+				case 2:
+				{
+					texr.x = 30;
+					texr.y = rand() % 30 + 140;
+					break;
+				}
+				}
+			}
+			case 2:
+			{
+				int leftOrDown = rand() % 2 + 1;
+				switch (leftOrDown)
+				{
+				case 1:
+				{
+					texr.x = rand() % 210 + 400;
+					texr.y = 30;
+					break;
+				}
+
+				case 2:
+				{
+					texr.x = 30;
+					texr.y = rand() % 30 + 140;
+					break;
+				}
+				}
+				break;
+			}
+			case 3:
+			{
+				int upOrRight = rand() % 2 + 1;
+				switch (upOrRight)
+				{
+				case 1:
+				{
+					texr.x = 30;
+					texr.y = rand() % 50 + 210;
+					break;
+				}
+
+				case 2:
+				{
+					texr.x = rand() % 30 + 180;
+					texr.y = 30;
+					break;
+				}
+				}
+				break;
+			}
+			case 4:
+			{
+				int leftOrUp = rand() % 2 + 1;
+				switch (leftOrUp)
+				{
+				case 1:
+				{
+					texr.x = 30;
+					texr.y = 210 + rand() % 50;
+					break;
+				}
+
+				case 2:
+				{
+					texr.x = rand() % 210 + 400;
+					texr.y = 30;
+					break;
+				}
+				}
+				break;
+			}
+			}
 
 			//Creating the golf ball
 			player = IMG_LoadTexture(renderer, "res/ball.bmp");
 			SDL_QueryTexture(player, NULL, NULL, &w, &h);
+			hole = IMG_LoadTexture(renderer, "res/hole.bmp");
+			SDL_QueryTexture(hole, NULL, NULL, &w, &h);
 			while (!quit)
 			{
 				SDL_RenderClear(renderer);
@@ -210,9 +757,13 @@ int main(int argc, char* argv[])
 				SDL_RenderClear(renderer);
 				//Initializing the player
 				SDL_RenderCopy(renderer, player, NULL, &texr);
+				SDL_RenderCopy(renderer, hole, NULL, &texrhole);
 				//Render wall
 				SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
-				SDL_RenderDrawRect(renderer, &wall);
+				SDL_RenderDrawRect(renderer, &wall1);
+				SDL_RenderDrawRect(renderer, &wall2);
+				SDL_RenderDrawRect(renderer, &wall3);
+				SDL_RenderDrawRect(renderer, &wall4);
 
 				while (SDL_PollEvent(&event) != 0)
 				{
@@ -230,6 +781,7 @@ int main(int argc, char* argv[])
 							int yMouse;
 
 							std::cout << oldxMouse << " " << oldyMouse << "\n";
+							std::cout << texr.x << " " << texr.y << "\n";
 
 							//Getting mouse coordinates on left click
 							SDL_GetMouseState(&xMouse, &yMouse);
@@ -238,22 +790,6 @@ int main(int argc, char* argv[])
 							oldxMouse = xMouse;
 							oldyMouse = yMouse;
 
-							////Changing the player coordinates
-							//if ((xMouse <= 500 && xMouse >= 300) || yMouse <= 240) {
-							//	texr.x = xMouse / 2;
-							//	texr.y = yMouse * 2;
-							//}
-							//else {
-							//	texr.x = xMouse * 2;
-							//	texr.y = yMouse / 2;
-							//}
-
-							//if (x == 640) {
-							//	texr.x = xMouse / 2;
-							//}
-							//else if (y == 480) {
-							//	texr.y = yMouse / 2;
-							//}
 						}
 
 						//Move with w,a,s,d
@@ -263,10 +799,10 @@ int main(int argc, char* argv[])
 							//Adjust the velocity
 							switch (event.key.keysym.sym)
 							{
-								case SDLK_w: texr.y -= 5; break;
-								case SDLK_s: texr.y += 5; break;
-								case SDLK_a: texr.x -= 5; break;
-								case SDLK_d: texr.x += 5; break;
+							case SDLK_w: texr.y -= 5; break;
+							case SDLK_s: texr.y += 5; break;
+							case SDLK_a: texr.x -= 5; break;
+							case SDLK_d: texr.x += 5; break;
 							}
 						}
 
@@ -278,7 +814,7 @@ int main(int argc, char* argv[])
 						mCollider.x = texr.x;
 
 						//If the dot collided or went too far to the left or right
-						if ((texr.x < 0 || texr.x > SCREEN_WIDTH || (texr.x + mCollider.w > SCREEN_WIDTH) || checkCollision(mCollider, wall)) && SDL_KEYUP)
+						if ((texr.x < 0 || texr.x > SCREEN_WIDTH || (texr.x + mCollider.w > SCREEN_WIDTH) || checkCollision(mCollider, wall1) || checkCollision(mCollider, wall2) || checkCollision(mCollider, wall3) || checkCollision(mCollider, wall4)) && SDL_KEYUP)
 						{
 							switch (event.key.keysym.sym) {
 							case SDLK_a:
@@ -301,14 +837,14 @@ int main(int argc, char* argv[])
 						mCollider.y = texr.y;
 
 						//If the dot collided or went too far up or down
-						if ((texr.y < 0 || texr.y > SCREEN_HEIGHT || (texr.y + mCollider.h > SCREEN_HEIGHT) || checkCollision(mCollider, wall)) && SDL_KEYUP)
+						if ((texr.y < 0 || texr.y > SCREEN_HEIGHT || (texr.y + mCollider.h > SCREEN_HEIGHT) || checkCollision(mCollider, wall1) || checkCollision(mCollider, wall2) || checkCollision(mCollider, wall3) || checkCollision(mCollider, wall4)) && SDL_KEYUP)
 						{
 							switch (event.key.keysym.sym) {
 							case SDLK_s:
 								//Move back
 								texr.y -= 5;
 								mCollider.y -= 5;
-								
+
 								break;
 							case SDLK_w:
 								//Move back
@@ -328,11 +864,9 @@ int main(int argc, char* argv[])
 					//Middle horizontal line
 					//SDL_UpdateWindowSurface(window);
 					//SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
-					//SDL_RenderDrawLine(renderer, 0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2);			
-
-					SDL_RenderCopy(renderer, player, NULL, &texr);
+					//SDL_RenderDrawLine(renderer, 0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
 				}
-				
+
 				SDL_RenderPresent(renderer);
 			}
 		}
