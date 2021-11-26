@@ -562,7 +562,7 @@ int main(int argc, char* argv[])
 
 			printf("%i %i %i %i\n", wall4.x, wall4.y, wall4.w, wall4.h);
 
-			//hole spawn
+						//hole spawn
 			int wherehole = rand() % 4 + 1;
 			std::cout << "\n" << wherehole;
 			switch (wherehole)
@@ -600,7 +600,7 @@ int main(int argc, char* argv[])
 
 						case 2:
 						{
-							texrhole.x = 30;
+							texrhole.x = 580;
 							texrhole.y = rand() % 30 + 140;
 							break;
 						}
@@ -622,7 +622,7 @@ int main(int argc, char* argv[])
 						case 2:
 						{
 							texrhole.x = rand() % 30 + 180;
-							texrhole.y = 30;
+							texrhole.y = 430;
 							break;
 						}
 					}
@@ -635,7 +635,7 @@ int main(int argc, char* argv[])
 					{
 						case 1:
 						{
-							texrhole.x = 30;
+							texrhole.x = 580;
 							texrhole.y = rand() % 50 + 210;
 							break;
 						}
@@ -643,7 +643,7 @@ int main(int argc, char* argv[])
 						case 2:
 						{
 							texrhole.x = rand() % 210 + 400;
-							texrhole.y = 30;
+							texrhole.y = 430;
 							break;
 						}
 					}
@@ -652,15 +652,15 @@ int main(int argc, char* argv[])
 			}
 
 			//ball spawn
-			int whereball = rand() % 4 + 1;
+			/*int whereball = rand() % 4 + 1;
 			while (whereball == wherehole)
 			{
 				whereball = rand() % 4 + 1;
 			}
-			std::cout << "\n" << whereball;
-			switch (whereball)
+			std::cout << "\n" << whereball;*/
+			switch (wherehole)
 			{
-			case 1:
+			case 4:
 			{
 				int rightOrDown = rand() % 2 + 1;
 				switch (rightOrDown)
@@ -679,7 +679,7 @@ int main(int argc, char* argv[])
 				}
 				}
 			}
-			case 2:
+			case 3:
 			{
 				int leftOrDown = rand() % 2 + 1;
 				switch (leftOrDown)
@@ -693,14 +693,14 @@ int main(int argc, char* argv[])
 
 				case 2:
 				{
-					texr.x = 30;
+					texr.x = 580;
 					texr.y = rand() % 30 + 140;
 					break;
 				}
 				}
 				break;
 			}
-			case 3:
+			case 2:
 			{
 				int upOrRight = rand() % 2 + 1;
 				switch (upOrRight)
@@ -715,28 +715,28 @@ int main(int argc, char* argv[])
 				case 2:
 				{
 					texr.x = rand() % 30 + 180;
-					texr.y = 30;
+					texr.y = 430;
 					break;
 				}
 				}
 				break;
 			}
-			case 4:
+			case 1:
 			{
 				int leftOrUp = rand() % 2 + 1;
 				switch (leftOrUp)
 				{
 				case 1:
 				{
-					texr.x = 30;
-					texr.y = 210 + rand() % 50;
+					texr.x = 580;
+					texr.y = rand() % 50 + 210;
 					break;
 				}
 
 				case 2:
 				{
 					texr.x = rand() % 210 + 400;
-					texr.y = 30;
+					texr.y = 430;
 					break;
 				}
 				}
