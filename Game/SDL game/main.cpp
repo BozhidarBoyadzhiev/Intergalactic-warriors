@@ -4,10 +4,12 @@
 #include <SDL_image.h>
 #include <cmath>
 #include <iostream>
-/* Random number generating */
-#include <stdio.h>      /* NULL */
-#include <stdlib.h>     /* srand, rand */
-#include <time.h>       /* time */
+#include <list>
+#include <cmath>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <string>
 
 //Screen size
 const int SCREEN_WIDTH = 640;
@@ -16,6 +18,16 @@ const int SCREEN_HEIGHT = 480;
 //Golf ball size
 int xSize = 15;
 int ySize = 15;
+
+//Velocity
+int xVel = 0;
+int yVel = 0;
+
+int level = 1;
+
+//Flags
+bool xcollideflag = false;
+bool ycollideflag = false;
 
 //Position for the golf ball in the middle
 float xStartPosition = SCREEN_WIDTH / 2 - xSize / 2;
@@ -30,22 +42,17 @@ float x = SCREEN_WIDTH / 2 - xSize / 2;
 float y = SCREEN_HEIGHT / 2 - ySize / 2;
 
 //Start structure initializing
-SDL_Rect texr;
-SDL_Rect texrhole;
+SDL_Rect ball;
+SDL_Rect ballhole;
 
 SDL_Window* window = NULL;
 
 SDL_Renderer* renderer = NULL;
 
-SDL_Surface* gScreenSurface = NULL;
-
-SDL_Surface* gHelloWorld = NULL;
-
 SDL_Texture* player;
-SDL_Texture* texture;
 SDL_Texture* hole;
+SDL_Texture* texture;
 //End structure initializing
-
 
 //Initializing function
 bool init()
@@ -98,86 +105,70 @@ void close()
 {
 
 	texture = NULL;
-	gHelloWorld = NULL;
-	gScreenSurface = NULL;
 	window = NULL;
 	renderer = NULL;
 
 	SDL_DestroyTexture(texture);
-	SDL_FreeSurface(gHelloWorld);
-	SDL_FreeSurface(gScreenSurface);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 
 	SDL_Quit();
 }
 
-//Text function
-void text() {
-	TTF_Font* font = TTF_OpenFont("res/arial.ttf", 48);
-
-	SDL_Color White = { 255, 255, 255 };
-	SDL_Surface* surfaceMessage = TTF_RenderText_Solid(font, "ball", White);
-
-	SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
-
-	SDL_Rect Message_rect;
-	Message_rect.x = 0;
-	Message_rect.y = 0;
-	Message_rect.w = 650;
-	Message_rect.h = 100;
-	SDL_RenderCopy(renderer, Message, NULL, &Message_rect);
-
-	SDL_FreeSurface(surfaceMessage);
-	SDL_DestroyTexture(Message);
+int GetRandomNumber(int high, int low) 
+{
+	return rand() % high + low;
 }
 
-bool checkCollision(SDL_Rect a, SDL_Rect b)
+bool PointInRect(int x, int y, SDL_Rect rec)
 {
-	//The sides of the rectangles
-	int leftA, leftB;
-	int rightA, rightB;
-	int topA, topB;
-	int bottomA, bottomB;
-
-	//Calculate the sides of rect A
-	leftA = a.x;
-	rightA = a.x + a.w;
-	topA = a.y;
-	bottomA = a.y + a.h;
-
-	//Calculate the sides of rect B
-	leftB = b.x;
-	rightB = b.x + b.w;
-	topB = b.y;
-	bottomB = b.y + b.h;
-	//If any of the sides from A are outside of B
-	if (bottomA <= topB)
+	if (x > rec.x && y > rec.y && x < rec.x + rec.w && y < rec.y + rec.h)
 	{
+		return true;
+	}
+	else {
 		return false;
 	}
+}
 
-	if (topA >= bottomB)
-	{
+bool checkCollision(SDL_Rect r1, SDL_Rect r2)
+{
+	if (PointInRect(r1.x, r1.y, r2) == true || PointInRect(r1.x + r1.w, r1.y + r1.h, r2) == true) {
+		return true;
+	}
+	else {
 		return false;
 	}
+}
 
-	if (rightA <= leftB)
-	{
+bool checkCollisionX(SDL_Rect r1, SDL_Rect r2)
+{
+	if (PointInRect(r1.x + r1.w, r1.y, r2) == true) {
+		return true;
+	}
+	else {
 		return false;
 	}
+}
 
-	if (leftA >= rightB)
-	{
+bool checkCollisionY(SDL_Rect r1, SDL_Rect r2)
+{
+	if (PointInRect(r1.x, r1.y + r1.h, r2) == true) {
+		return true;
+	}
+	else {
 		return false;
 	}
+}
 
-	//If none of the sides from A are outside B
-	return true;
+bool XYInRect(const SDL_Rect& rect, int x, int y)
+{
+	return (true);
 }
 
 int main(int argc, char* argv[])
 {
+	TTF_Init();
 
 	if (!init())
 	{
@@ -191,13 +182,35 @@ int main(int argc, char* argv[])
 		}
 		else {
 
+		startNewLevel:
+
+			char buffer[50];
+			sprintf_s(buffer, "Hole: %d", level);
+
+			std::cout << "\nLevel: " << level << "\n\n";
+
 			//Important parameters
 			bool quit = false;
+			SDL_Event event{};
+			int x1 = 0;
+			int y1 = 0;
+			int x2 = 0;
+			int y2 = 0;
+			bool drawing = false;
+
+			int powerLength = 0;
+			int powerHeight = 0;
+
+			int lineLength = 0;
+
 			int w, h;
-			texr.x = x; texr.y = y; texr.w = xSize; texr.h = ySize;
-			//Size for hole
-			texrhole.w = xSize + 10; texrhole.h = ySize + 10;
-			SDL_Event event;
+
+			ball.w = xSize;
+			ball.h = ySize;
+
+			std::cout << ball.x << ball.y;
+
+			ballhole.w = xSize + 10; ballhole.h = ySize + 10;
 
 			//Initialize random seed
 			srand(time(NULL));
@@ -208,86 +221,86 @@ int main(int argc, char* argv[])
 			std::cout << whichWall1 << "\n";
 			switch (whichWall1)
 			{
+			case 1:
+			{
+				int wallPos = 1 + rand() % 4;
+				switch (wallPos)
+				{
 				case 1:
 				{
-					int wallPos = 1 + rand() % 4;
-					switch (wallPos)
-					{
-						case 1:
-						{
-							wall1.y = 50 + rand() % 20;
-							wall1.x = 50 + rand() % 206;
-							wall1.w = 30 + rand() % 10;
-							wall1.h = 150 + rand() % 50;
-							break;
-						}
-						case 2:
-						{
-							wall1.y = 50 + rand() % 20;
-							wall1.x = 50 + rand() % 206;
-							wall1.w = 30 + rand() % 10;
-							wall1.h = 150 + rand() % 25;
-							break;
-						}
-						case 3:
-						{
-							wall1.y = 50 + rand() % 20;
-							wall1.x = 50 + rand() % 206;
-							wall1.w = 30 + rand() % 10;
-							wall1.h = 150 + rand() % 25;
-							break;
-						}
-						case 4:
-						{
-							wall1.y = 50 + rand() % 20;
-							wall1.x = 50 + rand() % 206;
-							wall1.w = 40 + rand() % 10;
-							wall1.h = 150 + rand() % 55;
-							break;
-						}
-					}
+					wall1.y = 50 + rand() % 20;
+					wall1.x = 50 + rand() % 206;
+					wall1.w = 30 + rand() % 10;
+					wall1.h = 150 + rand() % 50;
 					break;
 				}
 				case 2:
 				{
-					int wallPos = 1 + rand() % 4;
-					switch (wallPos)
-					{
-						case 1:
-						{
-							wall1.y = 50 + rand() % 142;
-							wall1.x = 50 + rand() % 130;
-							wall1.w = 150 + rand() % 50;
-							wall1.h = 30 + rand() % 10;
-							break;
-						}
-						case 2:
-						{
-							wall1.y = 50 + rand() % 142;
-							wall1.x = 50 + rand() % 130;
-							wall1.w = 150 + rand() % 50;
-							wall1.h = 30 + rand() % 10;
-							break;
-						}
-						case 3:
-						{
-							wall1.y = 50 + rand() % 142;
-							wall1.x = 50 + rand() % 130;
-							wall1.w = 150 + rand() % 50;
-							wall1.h = 30 + rand() % 10;
-							break;
-						}
-						case 4:
-						{
-							wall1.y = 50 + rand() % 142;
-							wall1.x = 50 + rand() % 130;
-							wall1.w = 150 + rand() % 50;
-							wall1.h = 30 + rand() % 10;
-							break;
-						}
-					}
+					wall1.y = 50 + rand() % 20;
+					wall1.x = 50 + rand() % 206;
+					wall1.w = 30 + rand() % 10;
+					wall1.h = 150 + rand() % 25;
 					break;
 				}
+				case 3:
+				{
+					wall1.y = 50 + rand() % 20;
+					wall1.x = 50 + rand() % 206;
+					wall1.w = 30 + rand() % 10;
+					wall1.h = 150 + rand() % 25;
+					break;
+				}
+				case 4:
+				{
+					wall1.y = 50 + rand() % 20;
+					wall1.x = 50 + rand() % 206;
+					wall1.w = 40 + rand() % 10;
+					wall1.h = 150 + rand() % 55;
+					break;
+				}
+				}
+				break;
+			}
+			case 2:
+			{
+				int wallPos = 1 + rand() % 4;
+				switch (wallPos)
+				{
+				case 1:
+				{
+					wall1.y = 50 + rand() % 142;
+					wall1.x = 50 + rand() % 130;
+					wall1.w = 150 + rand() % 50;
+					wall1.h = 30 + rand() % 10;
+					break;
+				}
+				case 2:
+				{
+					wall1.y = 50 + rand() % 142;
+					wall1.x = 50 + rand() % 130;
+					wall1.w = 150 + rand() % 50;
+					wall1.h = 30 + rand() % 10;
+					break;
+				}
+				case 3:
+				{
+					wall1.y = 50 + rand() % 142;
+					wall1.x = 50 + rand() % 130;
+					wall1.w = 150 + rand() % 50;
+					wall1.h = 30 + rand() % 10;
+					break;
+				}
+				case 4:
+				{
+					wall1.y = 50 + rand() % 142;
+					wall1.x = 50 + rand() % 130;
+					wall1.w = 150 + rand() % 50;
+					wall1.h = 30 + rand() % 10;
+					break;
+				}
+				}
+				break;
+			}
 			}
 
 			printf("%i %i %i %i\n", wall1.x, wall1.y, wall1.w, wall1.h);
@@ -562,93 +575,93 @@ int main(int argc, char* argv[])
 
 			printf("%i %i %i %i\n", wall4.x, wall4.y, wall4.w, wall4.h);
 
-						//hole spawn
+			//hole spawn
 			int wherehole = rand() % 4 + 1;
 			std::cout << "\n" << wherehole;
 			switch (wherehole)
 			{
+			case 1:
+			{
+				int rightOrDown = rand() % 2 + 1;
+				switch (rightOrDown)
+				{
 				case 1:
 				{
-					int rightOrDown = rand() % 2 + 1;
-					switch (rightOrDown)
-					{
-						case 1:
-						{
-							texrhole.x = rand() % 30 + 180;
-							texrhole.y = 30;
-							break;
-						}
-						case 2:
-						{
-							texrhole.x = 30;
-							texrhole.y = rand() % 30 + 140;
-							break;
-						}
-					}
+					ballhole.x = rand() % 30 + 180;
+					ballhole.y = 30;
+					break;
 				}
 				case 2:
 				{
-					int leftOrDown = rand() % 2 + 1;
-					switch (leftOrDown)
-					{
-						case 1:
-						{
-							texrhole.x = rand() % 210 + 400;
-							texrhole.y = 30;
-							break;
-						}
-
-						case 2:
-						{
-							texrhole.x = 580;
-							texrhole.y = rand() % 30 + 140;
-							break;
-						}
-					}
+					ballhole.x = 30;
+					ballhole.y = rand() % 30 + 140;
 					break;
 				}
-				case 3:
+				}
+			}
+			case 2:
+			{
+				int leftOrDown = rand() % 2 + 1;
+				switch (leftOrDown)
 				{
-					int upOrRight = rand() % 2 + 1;
-					switch (upOrRight)
-					{
-						case 1:
-						{
-							texrhole.x = 30;
-							texrhole.y = rand() % 50 + 210;
-							break;
-						}
-
-						case 2:
-						{
-							texrhole.x = rand() % 30 + 180;
-							texrhole.y = 430;
-							break;
-						}
-					}
-					break;
-				}
-				case 4:
+				case 1:
 				{
-					int leftOrUp = rand() % 2 + 1;
-					switch (leftOrUp)
-					{
-						case 1:
-						{
-							texrhole.x = 580;
-							texrhole.y = rand() % 50 + 210;
-							break;
-						}
-
-						case 2:
-						{
-							texrhole.x = rand() % 210 + 400;
-							texrhole.y = 430;
-							break;
-						}
-					}
+					ballhole.x = rand() % 210 + 400;
+					ballhole.y = 30;
 					break;
 				}
+
+				case 2:
+				{
+					ballhole.x = 580;
+					ballhole.y = rand() % 30 + 140;
+					break;
+				}
+				}
+				break;
+			}
+			case 3:
+			{
+				int upOrRight = rand() % 2 + 1;
+				switch (upOrRight)
+				{
+				case 1:
+				{
+					ballhole.x = 30;
+					ballhole.y = rand() % 50 + 210;
+					break;
+				}
+
+				case 2:
+				{
+					ballhole.x = rand() % 30 + 180;
+					ballhole.y = 430;
+					break;
+				}
+				}
+				break;
+			}
+			case 4:
+			{
+				int leftOrUp = rand() % 2 + 1;
+				switch (leftOrUp)
+				{
+				case 1:
+				{
+					ballhole.x = 580;
+					ballhole.y = rand() % 50 + 210;
+					break;
+				}
+
+				case 2:
+				{
+					ballhole.x = rand() % 210 + 400;
+					ballhole.y = 430;
+					break;
+				}
+				}
+				break;
+			}
 			}
 
 			//ball spawn
@@ -667,14 +680,14 @@ int main(int argc, char* argv[])
 				{
 				case 1:
 				{
-					texr.x = rand() % 30 + 180;
-					texr.y = 30;
+					ball.x = rand() % 30 + 180;
+					ball.y = 30;
 					break;
 				}
 				case 2:
 				{
-					texr.x = 30;
-					texr.y = rand() % 30 + 140;
+					ball.x = 30;
+					ball.y = rand() % 30 + 140;
 					break;
 				}
 				}
@@ -686,15 +699,15 @@ int main(int argc, char* argv[])
 				{
 				case 1:
 				{
-					texr.x = rand() % 210 + 400;
-					texr.y = 30;
+					ball.x = rand() % 210 + 400;
+					ball.y = 30;
 					break;
 				}
 
 				case 2:
 				{
-					texr.x = 580;
-					texr.y = rand() % 30 + 140;
+					ball.x = 580;
+					ball.y = rand() % 30 + 140;
 					break;
 				}
 				}
@@ -707,15 +720,15 @@ int main(int argc, char* argv[])
 				{
 				case 1:
 				{
-					texr.x = 30;
-					texr.y = rand() % 50 + 210;
+					ball.x = 30;
+					ball.y = rand() % 50 + 210;
 					break;
 				}
 
 				case 2:
 				{
-					texr.x = rand() % 30 + 180;
-					texr.y = 430;
+					ball.x = rand() % 30 + 180;
+					ball.y = 430;
 					break;
 				}
 				}
@@ -728,15 +741,15 @@ int main(int argc, char* argv[])
 				{
 				case 1:
 				{
-					texr.x = 580;
-					texr.y = rand() % 50 + 210;
+					ball.x = 580;
+					ball.y = rand() % 50 + 210;
 					break;
 				}
 
 				case 2:
 				{
-					texr.x = rand() % 210 + 400;
-					texr.y = 430;
+					ball.x = rand() % 210 + 400;
+					ball.y = 430;
 					break;
 				}
 				}
@@ -744,26 +757,27 @@ int main(int argc, char* argv[])
 			}
 			}
 
+
 			//Creating the golf ball
 			player = IMG_LoadTexture(renderer, "res/ball.bmp");
 			SDL_QueryTexture(player, NULL, NULL, &w, &h);
 			hole = IMG_LoadTexture(renderer, "res/hole.bmp");
 			SDL_QueryTexture(hole, NULL, NULL, &w, &h);
+
+
+			TTF_Font* font = TTF_OpenFont("res/arial.ttf", 25);
+			SDL_Color color = { 255, 255, 255 };
+			SDL_Surface* surface = TTF_RenderText_Solid(font,
+				buffer, color);
+			SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+			int texW = 0;
+			int texH = 0;
+			SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+			SDL_Rect dstrect = { 300, 10, texW, texH };
+
 			while (!quit)
 			{
-				SDL_RenderClear(renderer);
-				//Setting background color
-				SDL_SetRenderDrawColor(renderer, 0x10, 0xB3, 0x2D, 0xFF);
-				SDL_RenderClear(renderer);
-				//Initializing the player
-				SDL_RenderCopy(renderer, player, NULL, &texr);
-				SDL_RenderCopy(renderer, hole, NULL, &texrhole);
-				//Render wall
-				SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
-				SDL_RenderDrawRect(renderer, &wall1);
-				SDL_RenderDrawRect(renderer, &wall2);
-				SDL_RenderDrawRect(renderer, &wall3);
-				SDL_RenderDrawRect(renderer, &wall4);
 
 				while (SDL_PollEvent(&event) != 0)
 				{
@@ -771,104 +785,92 @@ int main(int argc, char* argv[])
 					{
 						quit = true;
 					}
-					else if (event.type == SDL_KEYDOWN || event.type == SDL_MOUSEBUTTONUP)
-					{
-						switch (event.button.button) {
-						case SDL_BUTTON_LEFT:
 
-							printf("\n");
-							int xMouse;
-							int yMouse;
+				}
+				int mouseX = 0, mouseY = 0;
+				SDL_GetMouseState(&mouseX, &mouseY);
 
-							std::cout << oldxMouse << " " << oldyMouse << "\n";
-							std::cout << texr.x << " " << texr.y << "\n";
 
-							//Getting mouse coordinates on left click
-							SDL_GetMouseState(&xMouse, &yMouse);
-							printf("%i %i\n", xMouse, yMouse);
-
-							oldxMouse = xMouse;
-							oldyMouse = yMouse;
-
-						}
-
-						//Move with w,a,s,d
-						int mVelX = 0, mVelY = 0;
-						if (event.type == SDL_KEYDOWN)
-						{
-							//Adjust the velocity
-							switch (event.key.keysym.sym)
-							{
-							case SDLK_w: texr.y -= 5; break;
-							case SDLK_s: texr.y += 5; break;
-							case SDLK_a: texr.x -= 5; break;
-							case SDLK_d: texr.x += 5; break;
-							}
-						}
-
-						SDL_Rect mCollider;
-						mCollider.w = xSize;
-						mCollider.h = ySize;
-
-						texr.x -= mVelX;
-						mCollider.x = texr.x;
-
-						//If the dot collided or went too far to the left or right
-						if ((texr.x < 0 || texr.x > SCREEN_WIDTH || (texr.x + mCollider.w > SCREEN_WIDTH) || checkCollision(mCollider, wall1) || checkCollision(mCollider, wall2) || checkCollision(mCollider, wall3) || checkCollision(mCollider, wall4)) && SDL_KEYUP)
-						{
-							switch (event.key.keysym.sym) {
-							case SDLK_a:
-								//Move back
-								texr.x += 5;
-								mCollider.x = texr.x;
-								break;
-							case SDLK_d:
-								//Move back
-								texr.x -= 5;
-								mCollider.x = texr.x;
-								break;
-							default:
-								break;
-							}
-						}
-
-						//Move the dot up or down
-						texr.y -= mVelY;
-						mCollider.y = texr.y;
-
-						//If the dot collided or went too far up or down
-						if ((texr.y < 0 || texr.y > SCREEN_HEIGHT || (texr.y + mCollider.h > SCREEN_HEIGHT) || checkCollision(mCollider, wall1) || checkCollision(mCollider, wall2) || checkCollision(mCollider, wall3) || checkCollision(mCollider, wall4)) && SDL_KEYUP)
-						{
-							switch (event.key.keysym.sym) {
-							case SDLK_s:
-								//Move back
-								texr.y -= 5;
-								mCollider.y -= 5;
-
-								break;
-							case SDLK_w:
-								//Move back
-								texr.y += 5;
-								mCollider.y -= 5;
-								break;
-							}
-						}
-						//Initializing the player's new coordinates
-						SDL_RenderCopy(renderer, player, NULL, &texr);
-					}
-
-					//Calling the text function
-					//TTF_Init();
-					//text();
-
-					//Middle horizontal line
-					//SDL_UpdateWindowSurface(window);
-					//SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
-					//SDL_RenderDrawLine(renderer, 0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
+				if (event.key.keysym.sym == SDLK_SPACE || event.type == SDL_KEYUP) {
+					xVel = GetRandomNumber(2, -2);
+					yVel = GetRandomNumber(2, -2);
+				}
+				else if (event.key.keysym.sym == SDLK_SPACE || event.type == SDL_KEYDOWN) {
+					xVel = GetRandomNumber(1, -3);
+					yVel = GetRandomNumber(1, -3);
 				}
 
+				if (event.type == SDL_MOUSEBUTTONUP)
+				{
+					goto startNewLevel;
+				}
+
+				if (ball.y < 1) {
+					yVel = -yVel;
+				}
+
+				if (ball.y + ball.h > SCREEN_HEIGHT - 1)
+				{
+					yVel = -yVel;
+				}
+
+				if (ball.x < 1) {
+					xVel = -xVel;
+				}
+
+				if (ball.x + ball.w > SCREEN_WIDTH - 1)
+				{
+					xVel = -xVel;
+				}
+
+				if (checkCollision(ball, wall1) || checkCollision(ball, wall2) || checkCollision(ball, wall3) || checkCollision(ball, wall4))
+				{
+					if (checkCollisionY(ball, wall1) || checkCollisionY(ball, wall2) || checkCollisionY(ball, wall3) || checkCollisionY(ball, wall4))
+					{
+						yVel = -yVel;
+					}
+					else if ((checkCollisionX(ball, wall1) || checkCollisionX(ball, wall2) || checkCollisionX(ball, wall3) || checkCollisionX(ball, wall4)))
+					{
+						xVel = -xVel;	
+					}
+				}
+
+				ball.x += xVel;
+				ball.y += yVel;
+
+
+				SDL_Delay(10);
+				//Setting background color
+				SDL_SetRenderDrawColor(renderer, 0x10, 0xB3, 0x2D, 0xFF);
+				SDL_RenderClear(renderer);
+				//Initializing the player and hole
+				SDL_RenderCopy(renderer, player, NULL, &ball);
+				SDL_RenderCopy(renderer, hole, NULL, &ballhole);
+				//Render wall
+				SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
+				SDL_RenderDrawRect(renderer, &wall1);
+				SDL_RenderDrawRect(renderer, &wall2);
+				SDL_RenderDrawRect(renderer, &wall3);
+				SDL_RenderDrawRect(renderer, &wall4);
+
+				SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
+				if (drawing) {
+					SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
+				}
+				SDL_RenderPresent(renderer);
+
+				if (checkCollision(ball, ballhole))
+				{
+					level++;
+					goto startNewLevel;
+				}
+				SDL_RenderCopy(renderer, texture, NULL, &dstrect);
 				SDL_RenderPresent(renderer);
 			}
+
+			SDL_DestroyTexture(texture);
+			SDL_FreeSurface(surface);
+			TTF_CloseFont(font);
 		}
 		//Closing everything
 		TTF_Quit();
