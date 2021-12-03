@@ -10,9 +10,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-int wherehole = rand() % 4 + 1;
-
-SDL_Rect wall1(SDL_Rect wall1)
+SDL_Rect wall1(SDL_Rect wall1, int wherehole)
 {
 	//Set the wall
 	int whichWall1 = rand() % 2 + 1;
@@ -103,7 +101,7 @@ SDL_Rect wall1(SDL_Rect wall1)
 	return wall1;
 }
 
-SDL_Rect wall2(SDL_Rect wall2)
+SDL_Rect wall2(SDL_Rect wall2, int wherehole)
 {
 	//Set the wall
 	int whichWall2 = rand() % 2 + 1;
@@ -194,7 +192,7 @@ SDL_Rect wall2(SDL_Rect wall2)
 	return wall2;
 }
 
-SDL_Rect wall3(SDL_Rect wall3)
+SDL_Rect wall3(SDL_Rect wall3, int wherehole)
 {
 	//Set the wall
 	int whichWall3 = rand() % 2 + 1;
@@ -285,7 +283,7 @@ SDL_Rect wall3(SDL_Rect wall3)
 	return wall3;
 }
 
-SDL_Rect wall4(SDL_Rect wall4)
+SDL_Rect wall4(SDL_Rect wall4, int wherehole)
 {
 	//Set the wall
 	int whichWall4 = rand() % 2 + 1;
@@ -376,7 +374,7 @@ SDL_Rect wall4(SDL_Rect wall4)
 	return wall4;
 }
 
-SDL_Rect ballGeneration(SDL_Rect ball)
+SDL_Rect ballGeneration(SDL_Rect ball, int wherehole)
 {
 
 	switch (wherehole)
@@ -388,14 +386,14 @@ SDL_Rect ballGeneration(SDL_Rect ball)
 		{
 		case 1:
 		{
-			ball.x = rand() % 30 + 180;
-			ball.y = 30;
+			ball.x = rand() % 180 + 30;
+			ball.y = 10;
 			break;
 		}
 		case 2:
 		{
-			ball.x = 30;
-			ball.y = rand() % 30 + 140;
+			ball.x = 10;
+			ball.y = rand() % 140 + 30;
 			break;
 		}
 		}
@@ -408,14 +406,14 @@ SDL_Rect ballGeneration(SDL_Rect ball)
 		case 1:
 		{
 			ball.x = rand() % 210 + 400;
-			ball.y = 30;
+			ball.y = 10;
 			break;
 		}
 
 		case 2:
 		{
-			ball.x = 580;
-			ball.y = rand() % 30 + 140;
+			ball.x = 600;
+			ball.y = rand() % 140 + 30;
 			break;
 		}
 		}
@@ -428,15 +426,15 @@ SDL_Rect ballGeneration(SDL_Rect ball)
 		{
 		case 1:
 		{
-			ball.x = 30;
-			ball.y = rand() % 50 + 210;
+			ball.x = 10;
+			ball.y = rand() % 210 + 30;
 			break;
 		}
 
 		case 2:
 		{
-			ball.x = rand() % 30 + 180;
-			ball.y = 430;
+			ball.x = rand() % 180 + 30;
+			ball.y = 450;
 			break;
 		}
 		}
@@ -449,15 +447,15 @@ SDL_Rect ballGeneration(SDL_Rect ball)
 		{
 		case 1:
 		{
-			ball.x = 580;
-			ball.y = rand() % 50 + 210;
+			ball.x = 600;
+			ball.y = rand() % 210 + 30;
 			break;
 		}
 
 		case 2:
 		{
 			ball.x = rand() % 210 + 400;
-			ball.y = 430;
+			ball.y = 450;
 			break;
 		}
 		}
@@ -468,7 +466,7 @@ SDL_Rect ballGeneration(SDL_Rect ball)
 	return ball;
 }
 
-SDL_Rect holeGeneration(SDL_Rect ballhole)
+SDL_Rect holeGeneration(SDL_Rect ballhole, int wherehole)
 {
 
 	switch (wherehole)
@@ -480,14 +478,14 @@ SDL_Rect holeGeneration(SDL_Rect ballhole)
 		{
 		case 1:
 		{
-			ballhole.x = rand() % 30 + 180;
-			ballhole.y = 30;
+			ballhole.x = rand() % 180 + 30;
+			ballhole.y = 10;
 			break;
 		}
 		case 2:
 		{
-			ballhole.x = 30;
-			ballhole.y = rand() % 30 + 140;
+			ballhole.x = 10;
+			ballhole.y = rand() % 140 + 30;
 			break;
 		}
 		}
@@ -500,14 +498,14 @@ SDL_Rect holeGeneration(SDL_Rect ballhole)
 		case 1:
 		{
 			ballhole.x = rand() % 210 + 400;
-			ballhole.y = 30;
+			ballhole.y = 10;
 			break;
 		}
 
 		case 2:
 		{
-			ballhole.x = 580;
-			ballhole.y = rand() % 30 + 140;
+			ballhole.x = 600;
+			ballhole.y = rand() % 140 + 30;
 			break;
 		}
 		}
@@ -520,15 +518,15 @@ SDL_Rect holeGeneration(SDL_Rect ballhole)
 		{
 		case 1:
 		{
-			ballhole.x = 30;
-			ballhole.y = rand() % 50 + 210;
+			ballhole.x = 10;
+			ballhole.y = rand() % 210 + 30;
 			break;
 		}
 
 		case 2:
 		{
-			ballhole.x = rand() % 30 + 180;
-			ballhole.y = 430;
+			ballhole.x = rand() % 180 + 30;
+			ballhole.y = 450;
 			break;
 		}
 		}
@@ -541,15 +539,15 @@ SDL_Rect holeGeneration(SDL_Rect ballhole)
 		{
 		case 1:
 		{
-			ballhole.x = 580;
-			ballhole.y = rand() % 50 + 210;
+			ballhole.x = 600;
+			ballhole.y = rand() % 210 + 30;
 			break;
 		}
 
 		case 2:
 		{
 			ballhole.x = rand() % 210 + 400;
-			ballhole.y = 430;
+			ballhole.y = 450;
 			break;
 		}
 		}

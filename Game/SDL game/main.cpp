@@ -60,7 +60,6 @@ int main(int argc, char* argv[])
 		}
 		else {
 		startNewLevel:
-
 			//Important parameters (FROM HERE)
 
 			sprintf_s(holetext, "Hole: %d", level);
@@ -73,20 +72,23 @@ int main(int argc, char* argv[])
 
 			ball.w = xSize;
 			ball.h = ySize;
-			ballhole.w = xSize + 10; ballhole.h = ySize + 10;
+			ballhole.w = xSize + 10; 
+			ballhole.h = ySize + 10;
 
 			//Important parameters (TO HERE)
 
 			//Initialize random seed
 			srand(time(NULL));
 
-			wallOne = wall1(wallOne);
-			wallTwo = wall2(wallTwo);
-			wallThree = wall3(wallThree);
-			wallFour = wall4(wallFour);
+			int wherehole = rand() % 4 + 1;
 
-			ballhole = holeGeneration(ballhole);
-			ball = ballGeneration(ball);
+			wallOne = wall1(wallOne, wherehole);
+			wallTwo = wall2(wallTwo, wherehole);
+			wallThree = wall3(wallThree, wherehole);
+			wallFour = wall4(wallFour, wherehole);
+
+			ballhole = holeGeneration(ballhole, wherehole);
+			ball = ballGeneration(ball, wherehole);
 
 			//Creating the golf ball
 			player = IMG_LoadTexture(renderer, "res/ball.bmp");
@@ -96,11 +98,10 @@ int main(int argc, char* argv[])
 
 
 
-			//Number of the hole (text)
-			TTF_Font* font = TTF_OpenFont("res/arial.ttf", 25);
+			//Text for the level
+			TTF_Font* font = TTF_OpenFont("res/arialbi.ttf", 25);
 			SDL_Color color = { 255, 255, 255 };
-			SDL_Surface* surface = TTF_RenderText_Solid(font,
-				holetext, color);
+			SDL_Surface* surface = TTF_RenderText_Solid(font, holetext, color);
 			SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
 
 			int texW = 0;
@@ -121,13 +122,14 @@ int main(int argc, char* argv[])
 
 				}
 
+				/*Ball movement controlling*/
 				if (event.key.keysym.sym == SDLK_SPACE || event.type == SDL_KEYUP) {
 					xVel = GetRandomNumber(2, -2);
 					yVel = GetRandomNumber(2, -2);
 				}
 				else if (event.key.keysym.sym == SDLK_SPACE || event.type == SDL_KEYDOWN) {
-					xVel = GetRandomNumber(1, -3);
-					yVel = GetRandomNumber(1, -3);
+					xVel = GetRandomNumber(2, -2);
+					yVel = GetRandomNumber(2, -2);
 				}
 
 				if (ball.y < 1) {
@@ -154,9 +156,14 @@ int main(int argc, char* argv[])
 					{
 						yVel = -yVel;
 					}
-					else if ((collisionX(ball, wallOne) || collisionX(ball, wallTwo) || collisionX(ball, wallThree) || collisionX(ball, wallFour)))
+					else if (collisionX(ball, wallOne) || collisionX(ball, wallTwo) || collisionX(ball, wallThree) || collisionX(ball, wallFour))
 					{
 						xVel = -xVel;	
+					}
+					else
+					{
+						yVel = -yVel;
+						xVel = -xVel;
 					}
 				}
 
@@ -172,24 +179,29 @@ int main(int argc, char* argv[])
 
 
 				SDL_Delay(10);
+
 				//Setting background color
 				SDL_SetRenderDrawColor(renderer, 0x10, 0xB3, 0x2D, 0xFF);
 				SDL_RenderClear(renderer);
+
 				//Initializing the player and hole
 				SDL_RenderCopy(renderer, player, NULL, &ball);
 				SDL_RenderCopy(renderer, hole, NULL, &ballhole);
+
 				//Render wall
 				SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
 				SDL_RenderDrawRect(renderer, &wallOne);
 				SDL_RenderDrawRect(renderer, &wallTwo);
 				SDL_RenderDrawRect(renderer, &wallThree);
 				SDL_RenderDrawRect(renderer, &wallFour);
+
 				//Rendering the text
 				SDL_RenderCopy(renderer, texture, NULL, &dstrect);
-
+				
 				//Check if the ball hits the hole
 				if (collision(ball, ballhole))
 				{
+					SDL_RenderClear(renderer);
 					level++;
 					goto startNewLevel;
 				}
