@@ -1,6 +1,6 @@
-<h1>Team Intergalactic Warriors</h1>
+<h1 align = "center">Team Intergalactic Warriors</h1>
 <hr>
-<img src = "https://user-images.githubusercontent.com/85335663/144723982-d20515c6-cb65-4ede-a673-7e8a28918a82.png">
+<p align = "center"><img src = "https://user-images.githubusercontent.com/85335663/144723982-d20515c6-cb65-4ede-a673-7e8a28918a82.png"></p>
 <hr>
 <h3>👥Team</h3>
 <br>
