@@ -7,8 +7,13 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string>
+<<<<<<< HEAD
 //Only used for main menu:
 #include <windows.h>
+=======
+#include <windows.h>
+#include <iomanip>
+>>>>>>> 9e66da7a723d53562839cf73f0e869989654d18f
 
 //Header Files
 #include "randomGeneration.h"; //Random generation function
@@ -44,6 +49,7 @@ SDL_Texture* player;
 SDL_Texture* hole;
 //End structure initializing
 
+<<<<<<< HEAD
 
 void title()
 {
@@ -90,6 +96,53 @@ int main(int argc, char* argv[])
 		for (int i = 0; i < 4; i++)
 		{
 			if (i == 3)
+=======
+
+void title()
+{
+	std::cout << "                                                              " << "\n";
+	std::cout << "      _____            _____  _____   ______         _____    " << "\n";
+	std::cout << "  ___|\\    \\      ____|\\    \\|\\    \\ |\\     \\    ___|\\    \\   " << "\n";
+	std::cout << " /    /\\    \\    /     /\\    \\\\\\    \\| \\     \\  /    /\\    \\  " << "\n";
+	std::cout << "|    |  |____|  /     /  \\    \\\\|    \\  \\     ||    |  |____| " << "\n";
+	std::cout << "|    |    ____ |     |    |    ||     \\  |    ||    |    ____ " << "\n";
+	std::cout << "|    |   |    ||     |    |    ||      \\ |    ||    |   |    |" << "\n";
+	std::cout << "|    |   |_,  ||\\     \\  /    /||    |\\ \\|    ||    |   |_,  |" << "\n";
+	std::cout << "|\\ ___\\___/  /|| \\_____\\/____/ ||____||\\_____/||\\ ___\\___/  /|" << "\n";
+	std::cout << "| |   /____ / | \\ |    ||    | /|    |/ \\|   ||| |   /____ / |" << "\n";
+	std::cout << " \\|___|    | /   \\|____||____|/ |____|   |___|/ \\|___|    | / " << "\n";
+	std::cout << "   \\( |____|/       \\(    )/      \\(       )/     \\( |____|/  " << "\n";
+	std::cout << "    '   )/           '    '        '       '       '   )/     " << "\n";
+	std::cout << "        '                                              '      " << "\n";
+}
+
+void centerstring(std::string s)
+{
+	int l = s.length();
+	int pos = (int)((64 - l) / 2);
+	for (int i = 0; i < pos; i++)
+		std::cout << " ";
+
+	std::cout << s;
+}
+
+int main(int argc, char* argv[])
+{
+
+	std::string Menu[4] = { "Start Game", "Info", "How to play", "Exit" };
+	int pointer = 0;
+	std::string MainMenuText[3] = { "Press Enter to select", "Press Backspace to go back", "MAIN MENU" };
+
+	while (true)
+	{
+		system("cls");
+
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 4); //Changes text color
+		title();
+		for (int i = 0; i < 3; i++)
+		{
+			if (i == 2)
+>>>>>>> 9e66da7a723d53562839cf73f0e869989654d18f
 			{
 				std::cout << std::endl;
 				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
@@ -105,12 +158,19 @@ int main(int argc, char* argv[])
 		}
 		std::cout << std::endl;
 
+<<<<<<< HEAD
 		//Changes color of active options string element
+=======
+>>>>>>> 9e66da7a723d53562839cf73f0e869989654d18f
 		for (int i = 0; i < 4; i++)
 		{
 			if (i == pointer)
 			{
+<<<<<<< HEAD
 				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
+=======
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11); //Changes color of active options string element
+>>>>>>> 9e66da7a723d53562839cf73f0e869989654d18f
 				centerstring(Menu[i]);
 				std::cout << std::endl;
 			}
@@ -124,7 +184,10 @@ int main(int argc, char* argv[])
 
 		while (true)
 		{
+<<<<<<< HEAD
 			//Moves pointer
+=======
+>>>>>>> 9e66da7a723d53562839cf73f0e869989654d18f
 			if (GetAsyncKeyState(VK_UP) != 0)
 			{
 				pointer -= 1;
@@ -151,25 +214,40 @@ int main(int argc, char* argv[])
 				{
 				case 0:
 				{
+<<<<<<< HEAD
 					//Initialize text
 					TTF_Init();
 
 					//Checks if game is initialized
+=======
+					TTF_Init();
+
+>>>>>>> 9e66da7a723d53562839cf73f0e869989654d18f
 					if (!init())
 					{
 						printf("Failed to initialize!\n");
 					}
 					else
 					{
+<<<<<<< HEAD
 						//Checks if media is initialized
+=======
+
+>>>>>>> 9e66da7a723d53562839cf73f0e869989654d18f
 						if (!loadMedia()) {
 							printf("Failed to load media\n");
 						}
 						else {
 						startNewLevel:
 
+<<<<<<< HEAD
 							//Important parameters
 							sprintf_s(holetext, "Hole: %i", level);
+=======
+							//Important parameters (FROM HERE)
+
+							sprintf_s(holetext, "Hole: %d", level);
+>>>>>>> 9e66da7a723d53562839cf73f0e869989654d18f
 
 							bool quit = false;
 							SDL_Event event{};
@@ -179,8 +257,14 @@ int main(int argc, char* argv[])
 
 							ball.w = xSize;
 							ball.h = ySize;
+<<<<<<< HEAD
 							ballhole.w = xSize + 10;
 							ballhole.h = ySize + 10;
+=======
+							ballhole.w = xSize + 10; ballhole.h = ySize + 10;
+
+							//Important parameters (TO HERE)
+>>>>>>> 9e66da7a723d53562839cf73f0e869989654d18f
 
 							//Initialize random seed
 							srand(time(NULL));
@@ -195,7 +279,11 @@ int main(int argc, char* argv[])
 							ballhole = holeGeneration(ballhole, wherehole);
 							ball = ballGeneration(ball, wherehole);
 
+<<<<<<< HEAD
 							//Creating the golf ball and hole
+=======
+							//Creating the golf ball
+>>>>>>> 9e66da7a723d53562839cf73f0e869989654d18f
 							player = IMG_LoadTexture(renderer, "res/ball.bmp");
 							SDL_QueryTexture(player, NULL, NULL, &w, &h);
 							hole = IMG_LoadTexture(renderer, "res/hole.bmp");
@@ -228,8 +316,11 @@ int main(int argc, char* argv[])
 
 								}
 
+<<<<<<< HEAD
 
 								//Ball movement
+=======
+>>>>>>> 9e66da7a723d53562839cf73f0e869989654d18f
 								if (event.key.keysym.sym == SDLK_SPACE || event.type == SDL_KEYUP) {
 									xVel = GetRandomNumber(2, -2);
 									yVel = GetRandomNumber(2, -2);
@@ -272,7 +363,10 @@ int main(int argc, char* argv[])
 								ball.x += xVel;
 								ball.y += yVel;
 
+<<<<<<< HEAD
 								//Generate new stage
+=======
+>>>>>>> 9e66da7a723d53562839cf73f0e869989654d18f
 								if (event.type == SDL_MOUSEBUTTONUP)
 								{
 									SDL_DestroyTexture(player);
@@ -314,9 +408,15 @@ int main(int argc, char* argv[])
 						TTF_Quit();
 						close();
 					}
+<<<<<<< HEAD
 					break;
 				}
 				//Game info
+=======
+					Sleep(1000);
+					break;
+				}
+>>>>>>> 9e66da7a723d53562839cf73f0e869989654d18f
 				case 1:
 				{
 					std::cout << "\n\n\n GONG is an endless, fun golf/pong-type game with many \"features\".\n\n";
@@ -331,7 +431,10 @@ int main(int argc, char* argv[])
 					}
 					break;
 				}
+<<<<<<< HEAD
 				//How to play
+=======
+>>>>>>> 9e66da7a723d53562839cf73f0e869989654d18f
 				case 2:
 				{
 					std::cout << "\n\n\n Tips:\n";
@@ -346,7 +449,10 @@ int main(int argc, char* argv[])
 					}
 					break;
 				}
+<<<<<<< HEAD
 				//Close
+=======
+>>>>>>> 9e66da7a723d53562839cf73f0e869989654d18f
 				case 3:
 				{
 					return 0;
@@ -357,7 +463,14 @@ int main(int argc, char* argv[])
 			}
 		}
 
+<<<<<<< HEAD
 		Sleep(100);//Wait
 	}
 	return 0;
 }
+=======
+		Sleep(300);//Wait
+	}
+	return 0;
+}
+>>>>>>> 9e66da7a723d53562839cf73f0e869989654d18f
