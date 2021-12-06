@@ -17,6 +17,7 @@ const int SCREEN_HEIGHT = 480;
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 
+//Initializing the game
 bool init()
 {
 	bool success = true;
@@ -54,6 +55,7 @@ bool init()
 	return success;
 }
 
+//Loading the media
 bool loadMedia()
 {
 	bool success = true;
@@ -61,6 +63,7 @@ bool loadMedia()
 	return success;
 }
 
+//Closing the game
 void close()
 {
 	SDL_Texture* texture = NULL;
